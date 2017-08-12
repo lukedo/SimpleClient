@@ -160,11 +160,6 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         blueBattleSceneLoader.onClick.AddListener(delegate { LoadBattleScene(blueBattleSceneName); });
     }
 
-    public void SetCurrentCanvas(Transform canvasTransform)
-    {
-        currentCanvas = canvasTransform;
-    }
-
     public void LoadBattleScene(string sceneName)
     {
         if (connectedToServer)
@@ -181,6 +176,11 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
     public void LoadMenuScene()
     {
         SceneManager.LoadScene(mainSceneName);
+    }
+    
+    public void SetCurrentCanvas(Transform canvasTransform)
+    {
+        currentCanvas = canvasTransform;
     }
 
     public int GetPickedHeroId()
@@ -207,11 +207,13 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         
         battleIsOver = true;
         HeroPrefabs[pickedHeroId].GetComponent<Hero>().LoseAmount += 1;
-        
-        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-        msgBox.SetBoxText("Hero is dead!", "ok");
-        
-        msgBox.Button.onClick.AddListener(ShowLoseDialog);
+
+        MessageBox.CreateMessageBox(messageBoxPrefab, currentCanvas, "Hero is dead!", "Ok",
+            delegate
+            {
+                MessageBox.CreateMessageBox(messageBoxPrefab, currentCanvas, "You lose", "return to menu",
+                    LoadMenuScene);
+            });
     }
     
     public void UnitDied()
@@ -224,25 +226,11 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         battleIsOver = true;
         HeroPrefabs[pickedHeroId].GetComponent<Hero>().WinAmount += 1;
 
-        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-        msgBox.SetBoxText("Enemy is dead!", "ok");
-
-        msgBox.Button.onClick.AddListener(ShowWinDialog);
-    }
-
-    private void ShowWinDialog()
-    {
-        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-        msgBox.SetBoxText("You win!", "return to menu");
-        
-        msgBox.Button.onClick.AddListener(LoadMenuScene);
-    }
-
-    private void ShowLoseDialog()
-    {
-        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-        msgBox.SetBoxText("You lose!", "return to menu");
-        
-        msgBox.Button.onClick.AddListener(LoadMenuScene);
+        MessageBox.CreateMessageBox(messageBoxPrefab, currentCanvas, "Enemy is dead!", "Ok",
+            delegate
+            {
+                MessageBox.CreateMessageBox(messageBoxPrefab, currentCanvas, "You win", "return to menu",
+                    LoadMenuScene);
+            });
     }
 }

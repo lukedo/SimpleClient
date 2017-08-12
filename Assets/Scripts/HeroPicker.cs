@@ -3,24 +3,21 @@ using UnityEngine.UI;
 
 public class HeroPicker : MonoBehaviour
 {
-	[SerializeField]
-	public static HeroPicker Current;
-    [SerializeField] 
-    private Button[] pickerButtons;
-
+    [SerializeField] public static HeroPicker Current;
+    [SerializeField] private Button[] pickerButtons;
     [SerializeField] private Image heroAppearance;
     [SerializeField] private Text winText;
     [SerializeField] private Text loseText;
-    
+
     private bool picked;
     private int currentHero;
 
     public void Awake()
     {
-		Current = this;
+        Current = this;
         UpdateHeroInformation();
     }
-    
+
     public void ShowPreviousHero()
     {
         if (currentHero != 0)
@@ -63,17 +60,17 @@ public class HeroPicker : MonoBehaviour
     public void UpdateHeroInformation()
     {
         Hero tmpHero = GameManager.Current.HeroPrefabs[currentHero].GetComponent<Hero>();
-		if (heroAppearance != null) 
-		{
-			heroAppearance.sprite = tmpHero.Appearance;
-		}
-		if (winText != null) 
-		{
-			winText.text = tmpHero.WinAmount.ToString ();
-		}
-		if (loseText != null) 
-		{
-			loseText.text = tmpHero.LoseAmount.ToString ();
-		}
+        if (heroAppearance != null)
+        {
+            heroAppearance.sprite = tmpHero.Appearance;
+        }
+        if (winText != null)
+        {
+            winText.text = tmpHero.WinAmount.ToString();
+        }
+        if (loseText != null)
+        {
+            loseText.text = tmpHero.LoseAmount.ToString();
+        }
     }
 }

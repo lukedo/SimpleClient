@@ -5,7 +5,7 @@ public class Hero : Unit
     [SerializeField] private Sprite appearance;
     [SerializeField] private int winAmount;
     [SerializeField] private int loseAmount;
-    
+
     public int WinAmount
     {
         get { return winAmount; }
@@ -24,16 +24,16 @@ public class Hero : Unit
         set { appearance = value; }
     }
 
-	public void ClearScore() 
-	{
-		winAmount = 0;
-		loseAmount = 0;
-	}
+    public void ClearScore()
+    {
+        winAmount = 0;
+        loseAmount = 0;
+    }
 
     public override void Die()
     {
-		HealthCurrent = 0; 
-		HealthBar.text = HealthCurrent.ToString();
+        HealthCurrent = 0;
+        HealthBar.text = HealthCurrent.ToString();
         GameManager.Current.HeroDied();
     }
 
