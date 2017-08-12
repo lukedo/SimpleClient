@@ -11,28 +11,34 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
 
     #region photon
 
+    [Header("Photon")]
     [SerializeField] private string serverAddress = "127.0.0.1:4530";
     [SerializeField] private string applicationName = "SimpleGameServer";
     [SerializeField] private float updateRate = 0.05f;
+    [SerializeField] private Text connetionText;
     private PhotonPeer peer;
 
     #endregion
-    
-    [SerializeField] private Text connetionText;
-    [SerializeField] private int pickedHeroId;
-    [SerializeField] public GameObject[] HeroPrefabs;
-    [SerializeField] private GameObject messageBoxPrefab;
-    [SerializeField] private Transform currentCanvas;
-    [SerializeField] private string mainSceneName;
 
+    [Header("Scenes")]
+    [SerializeField] private string mainSceneName;
     [SerializeField] private string redBattleSceneName;
     [SerializeField] private Button redBattleSceneLoader;
     [SerializeField] private string greenBattleSceneName;
     [SerializeField] private Button greenBattleSceneLoader;
     [SerializeField] private string blueBattleSceneName;
     [SerializeField] private Button blueBattleSceneLoader;
+    
+    [Header("Prefabs")]
+    [SerializeField] public GameObject[] HeroPrefabs;
+    [SerializeField] private GameObject messageBoxPrefab;
+    
+    [Header("Other")]
+    [SerializeField] private Transform currentCanvas;
     [SerializeField] private bool battleIsOver = true;
     
+    private Battle currentBattle;
+    private int pickedHeroId;
     private bool connectedToServer;
 
     public void Awake()
@@ -67,10 +73,10 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         peer = new PhotonPeer(this, ConnectionProtocol.Tcp);
         connetionText.text = "connecting...";
         peer.Connect(serverAddress, applicationName);
-        StartCoroutine(updatePeer());
+        StartCoroutine(UpdatePeer());
     }
     
-    private IEnumerator updatePeer()
+    private IEnumerator UpdatePeer()
     {
         while (true)
         {
@@ -81,29 +87,14 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
 
     public void OnOperationResponse(OperationResponse operationResponse)
     {
-        switch ((OperationCode) operationResponse.OperationCode)
+        if ((OperationCode) operationResponse.OperationCode == OperationCode.Attack)
         {
-            case OperationCode.Test:
-                Debug.Log(operationResponse.Parameters[1]);
-                Debug.Log(operationResponse.Parameters[2]);
-                break;
-            case OperationCode.Attack:
-                if ((bool) operationResponse.Parameters[1])
-                {
-                    GameObject.Find ((string)operationResponse[0]).GetComponent<Unit> ().GetDamage (10);
-                }
-                else
-                {
-                    GameObject.Find ((string)operationResponse[0]).GetComponent<Unit> ().Die();
-                }
-                break;
-            default:
-                Debug.Log("Unknown operation code");
-                break;
+            currentBattle.UnitAttacked((string) operationResponse.Parameters[0], 
+                (bool) operationResponse.Parameters[1]);
         }
     }
     
-    public void checkAttack(int damage, int health, string unitName)
+    public void CheckAttack(int damage, int health, string unitName)
     {
         OperationRequest request = new OperationRequest
         {
@@ -132,7 +123,10 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         else
         {
             connectedToServer = false;
-            connetionText.text = statusCode.ToString().ToLower();
+            if (connetionText != null)
+            {
+                connetionText.text = statusCode.ToString().ToLower();
+            }
         }
     }
 
@@ -174,7 +168,7 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         }
     }
 
-    public void loadMenuScene()
+    public void LoadMenuScene()
     {
         SceneManager.LoadScene(mainSceneName);
     }
@@ -189,47 +183,56 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
         pickedHeroId = id;
     }
 
+    public void SetCurrentBattle(Battle battle)
+    {
+        currentBattle = battle;
+    }
+
     public void HeroDied()
     {
-        if (!battleIsOver)
+        if (battleIsOver)
         {
-            battleIsOver = true;
-            HeroPrefabs[pickedHeroId].GetComponent<Hero>().LoseAmount += 1;
-        
-            MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-            msgBox.SetBoxText("Hero is dead!", "ok");
-        
-            msgBox.Button.onClick.AddListener(delegate { showLoseDialog(); });
+            return;
         }
+        
+        battleIsOver = true;
+        HeroPrefabs[pickedHeroId].GetComponent<Hero>().LoseAmount += 1;
+        
+        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
+        msgBox.SetBoxText("Hero is dead!", "ok");
+        
+        msgBox.Button.onClick.AddListener(ShowLoseDialog);
     }
     
     public void UnitDied()
     {
-        if (!battleIsOver)
+        if (battleIsOver)
         {
-            battleIsOver = true;
-            HeroPrefabs[pickedHeroId].GetComponent<Hero>().WinAmount += 1;
-
-            MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
-            msgBox.SetBoxText("Enemy is dead!", "ok");
-
-            msgBox.Button.onClick.AddListener(delegate { showWinDialog(); });
+            return;
         }
+        
+        battleIsOver = true;
+        HeroPrefabs[pickedHeroId].GetComponent<Hero>().WinAmount += 1;
+
+        MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
+        msgBox.SetBoxText("Enemy is dead!", "ok");
+
+        msgBox.Button.onClick.AddListener(ShowWinDialog);
     }
 
-    private void showWinDialog()
+    private void ShowWinDialog()
     {
         MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
         msgBox.SetBoxText("You win!", "return to menu");
         
-        msgBox.Button.onClick.AddListener(delegate { loadMenuScene(); });
+        msgBox.Button.onClick.AddListener(LoadMenuScene);
     }
 
-    private void showLoseDialog()
+    private void ShowLoseDialog()
     {
         MessageBox msgBox = Instantiate(messageBoxPrefab, currentCanvas).GetComponent<MessageBox>();
         msgBox.SetBoxText("You lose!", "return to menu");
         
-        msgBox.Button.onClick.AddListener(delegate { loadMenuScene(); });
+        msgBox.Button.onClick.AddListener(LoadMenuScene);
     }
 }

@@ -1,28 +1,33 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Unit : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] protected Text healthBar;
-    protected int healthCurrent = 100; 
+    [SerializeField] protected Text HealthBar;
+    protected int HealthCurrent = 100; 
     
     public void OnPointerClick(PointerEventData data)
     {
-		GameManager.Current.checkAttack(10, healthCurrent, gameObject.name);
+	    UnitAttacked();
+		
     }
+
+	protected virtual void UnitAttacked()
+	{
+		GameManager.Current.CheckAttack(10, HealthCurrent, "Unit");
+	}
 
     public void GetDamage(int amount)
     {
-		healthCurrent -= amount; 
-		healthBar.text = healthCurrent.ToString();
+		HealthCurrent -= amount; 
+		HealthBar.text = HealthCurrent.ToString();
     }
 
     public virtual void Die()
     {
-		healthCurrent = 0; 
-		healthBar.text = healthCurrent.ToString();
+		HealthCurrent = 0; 
+		HealthBar.text = HealthCurrent.ToString();
         GameManager.Current.UnitDied();
     }
 }

@@ -32,8 +32,13 @@ public class Hero : Unit
 
     public override void Die()
     {
-		healthCurrent = 0; 
-		healthBar.text = healthCurrent.ToString();
+		HealthCurrent = 0; 
+		HealthBar.text = HealthCurrent.ToString();
         GameManager.Current.HeroDied();
+    }
+
+    protected override void UnitAttacked()
+    {
+        GameManager.Current.CheckAttack(10, HealthCurrent, "Hero");
     }
 }

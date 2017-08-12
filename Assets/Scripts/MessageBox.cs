@@ -17,9 +17,9 @@ public class MessageBox : MonoBehaviour
         get { return button; }
     }
 
-    public void SetBoxText(string message, string button)
+    public void SetBoxText(string message, string buttonMessage)
     {
         messageText.text = message;
-        buttonText.text = button;
+        this.buttonText.text = buttonMessage;
     }
 }
