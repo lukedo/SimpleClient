@@ -132,6 +132,16 @@ public class GameManager : MonoBehaviour,  IPhotonPeerListener
 
     public void OnEvent(EventData eventData)
     {
+        if (eventData.Parameters[0].Equals("ClearScore"))
+        {
+            Debug.Log ("Clear score");
+            foreach (GameObject hero in HeroPrefabs)
+            {
+                hero.GetComponent<Hero> ().ClearScore();
+            }
+			
+            HeroPicker.Current.UpdateHeroInformation ();
+        }
     }
 
     public void OnMessage(object messages)
