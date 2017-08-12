@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{F910C14A-7AB4-89A6-27EA-11B64CFC8EE4}</ProjectGuid>
+    <ProjectGuid>{2292066C-03A4-5733-4636-43653C20A180}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor-firstpass</AssemblyName>
@@ -51,11 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Plugins\Editor\JetBrains\Unity3DRider.cs" />
-    <None Include="Assets\Photon Unity Networking\link.xml" />
-    <None Include="Assets\Plugins\Photon3Unity3D.xml" />
-    <None Include="Assets\Plugins\release_history.txt" />
-    <None Include="Assets\Photon Unity Networking\readme.txt" />
-    <None Include="Assets\Photon Unity Networking\changelog.txt" />
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
@@ -119,21 +114,9 @@
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Photon Unity Networking/Editor/PhotonNetwork/Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Photon3DotNet">
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Plugins/Photon3DotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Photon3Unity3D">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/Photon3Unity3D.dll</HintPath>
-    </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{E0515CFC-FF05-102B-1A66-93EE5A33DE43}</Project>
-      <Name>Assembly-CSharp-firstpass</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

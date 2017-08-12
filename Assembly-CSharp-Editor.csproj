@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{2915F48B-562C-EF87-10D9-DB305356531F}</ProjectGuid>
+    <ProjectGuid>{5544F79C-5306-909F-C855-53D6959D5DFD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -136,26 +136,26 @@
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Photon Unity Networking/Editor/PhotonNetwork/Newtonsoft.Json.dll</HintPath>
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Photon Unity Networking/Editor/PhotonNetwork/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/Photon3Unity3D.dll</HintPath>
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Plugins/Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{E0515CFC-FF05-102B-1A66-93EE5A33DE43}</Project>
+      <Project>{079D398E-4AFC-CD7E-7881-F923D075EBD1}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{3A61A4F9-7622-E108-4E88-76A820987925}</Project>
+      <Project>{12F44184-A422-5F27-22E6-507969043F15}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
     <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
-      <Project>{F910C14A-7AB4-89A6-27EA-11B64CFC8EE4}</Project>
+      <Project>{2292066C-03A4-5733-4636-43653C20A180}</Project>
       <Name>Assembly-CSharp-Editor-firstpass</Name>
     </ProjectReference>
   </ItemGroup>

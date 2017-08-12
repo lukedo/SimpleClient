@@ -1,12 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using ExitGames.Client.Photon;
 
-public class GameManager : Photon.MonoBehaviour
+public class GameManager : MonoBehaviour,  IPhotonPeerListener
 {
     public static GameManager Current;
-    [SerializeField] private string gameVersion;
-    [SerializeField] private string roomName;
+
+    #region photon
+
+    [SerializeField] private string serverAddress = "127.0.0.1:4530";
+    [SerializeField] private string applicationName = "SimpleGameServer";
+    [SerializeField] private float updateRate = 0.05f;
+    private PhotonPeer peer;
+
+    #endregion
+    
     [SerializeField] private Text connetionText;
     [SerializeField] private int pickedHeroId;
     [SerializeField] public GameObject[] HeroPrefabs;
@@ -22,13 +33,13 @@ public class GameManager : Photon.MonoBehaviour
     [SerializeField] private Button blueBattleSceneLoader;
     [SerializeField] private bool battleIsOver = true;
     
-    private bool connectedToRoom;
+    private bool connectedToServer;
 
     public void Awake()
     {
 		if (Current != null) {
 			Current.connetionText = connetionText;
-			connetionText.text = "connected";
+			connetionText.text = connetionText.text = "connected";
 			Current.currentCanvas = currentCanvas;
 
 		    Current.pickedHeroId = 0;
@@ -37,45 +48,112 @@ public class GameManager : Photon.MonoBehaviour
 			Current.blueBattleSceneLoader = blueBattleSceneLoader;
 			Current.InitSceneLoaders ();
 
-			Destroy (this.gameObject);
+			Destroy (gameObject);
 		}
 		else
 		{
 			Current = this;
-			gameObject.AddComponent<PhotonView> ();
-			gameObject.GetComponent<PhotonView> ().viewID = 1;
-
+		    
+		    Application.runInBackground = true;
+		    ConnectToPhoton();
 			DontDestroyOnLoad(this);
 		}
     }
 
-    public void Start()
+    #region  photon
+
+    public void ConnectToPhoton()
     {
-        connetionText.text = "connecting to lobby...";
-        PhotonNetwork.ConnectUsingSettings(gameVersion);
+        peer = new PhotonPeer(this, ConnectionProtocol.Tcp);
+        connetionText.text = "connecting...";
+        peer.Connect(serverAddress, applicationName);
+        StartCoroutine(updatePeer());
     }
+    
+    private IEnumerator updatePeer()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(updateRate);
+            peer.Service();
+        }
+    }
+
+    public void OnOperationResponse(OperationResponse operationResponse)
+    {
+        switch ((OperationCode) operationResponse.OperationCode)
+        {
+            case OperationCode.Test:
+                Debug.Log(operationResponse.Parameters[1]);
+                Debug.Log(operationResponse.Parameters[2]);
+                break;
+            case OperationCode.Attack:
+                if ((bool) operationResponse.Parameters[1])
+                {
+                    GameObject.Find ((string)operationResponse[0]).GetComponent<Unit> ().GetDamage (10);
+                }
+                else
+                {
+                    GameObject.Find ((string)operationResponse[0]).GetComponent<Unit> ().Die();
+                }
+                break;
+            default:
+                Debug.Log("Unknown operation code");
+                break;
+        }
+    }
+    
+    public void checkAttack(int damage, int health, string unitName)
+    {
+        OperationRequest request = new OperationRequest
+        {
+            OperationCode = (byte) OperationCode.Attack,
+            Parameters = new Dictionary<byte, object> {{0, unitName}, {1, damage}, {2, health}}
+        };
+
+        peer.OpCustom(request, true, 0, false);
+    }
+    
+    private void OnApplicationQuit()
+    {
+        if (peer != null)
+        {
+            peer.Disconnect();
+        }
+    }
+
+    public void OnStatusChanged(StatusCode statusCode)
+    {
+        if (statusCode == StatusCode.Connect)
+        {
+            connetionText.text = "connected";
+            connectedToServer = true;
+        }
+        else
+        {
+            connectedToServer = false;
+            connetionText.text = statusCode.ToString().ToLower();
+        }
+    }
+
+    public void OnEvent(EventData eventData)
+    {
+    }
+
+    public void OnMessage(object messages)
+    {
+    }
+	
+    public void DebugReturn(DebugLevel level, string message)
+    {
+    }
+    #endregion
 
     public void InitSceneLoaders()
     {
         redBattleSceneLoader.onClick.AddListener(delegate { LoadBattleScene(redBattleSceneName); });
         greenBattleSceneLoader.onClick.AddListener(delegate { LoadBattleScene(greenBattleSceneName); });
         blueBattleSceneLoader.onClick.AddListener(delegate { LoadBattleScene(blueBattleSceneName); });
-    }
-
-    public void OnJoinedLobby()
-    {
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = false;
-        roomOptions.MaxPlayers = 2;
-
-        PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
-        connetionText.text = "connecting to room...";
-    }
-
-    public void OnJoinedRoom()
-    {
-        connetionText.text = "connected";
-        connectedToRoom = true;
     }
 
     public void SetCurrentCanvas(Transform canvasTransform)
@@ -85,7 +163,7 @@ public class GameManager : Photon.MonoBehaviour
 
     public void LoadBattleScene(string sceneName)
     {
-        if (connectedToRoom)
+        if (connectedToServer)
         {
             battleIsOver = false;
             SceneManager.LoadScene(sceneName);
@@ -124,43 +202,7 @@ public class GameManager : Photon.MonoBehaviour
             msgBox.Button.onClick.AddListener(delegate { showLoseDialog(); });
         }
     }
-
-    public void checkAttack(int damage, int health, string unitName)
-    {
-		photonView.RPC("ChatMessage", PhotonTargets.MasterClient, damage, health, unitName);
-    }
     
-    [PunRPC]
-	void ChatMessage(int damage, int health, string unitName)
-    {
-        Debug.Log("dmg: " + damage + "hlth: " + health);
-    }
-    
-    [PunRPC]
-	void PlayerCanDamage(bool canDamage, string unitName)
-    {
-        if (canDamage)
-        {
-			GameObject.Find (unitName).GetComponent<Unit> ().GetDamage (10);
-        }
-        else
-        {
-			GameObject.Find (unitName).GetComponent<Unit> ().Die();
-        }
-    }
-
-	[PunRPC]
-	void ClearScore()
-	{
-		Debug.Log ("Clear score");
-		foreach (GameObject hero in HeroPrefabs)
-		{
-			hero.GetComponent<Hero> ().ClearScore();
-		}
-			
-		HeroPicker.Current.UpdateHeroInformation ();
-	}
-
     public void UnitDied()
     {
         if (!battleIsOver)

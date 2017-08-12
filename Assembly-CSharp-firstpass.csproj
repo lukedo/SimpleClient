@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{E0515CFC-FF05-102B-1A66-93EE5A33DE43}</ProjectGuid>
+    <ProjectGuid>{079D398E-4AFC-CD7E-7881-F923D075EBD1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
@@ -51,11 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Plugins\WebSocket\WebSocket.cs" />
-    <None Include="Assets\Photon Unity Networking\link.xml" />
     <None Include="Assets\Plugins\Photon3Unity3D.xml" />
     <None Include="Assets\Plugins\release_history.txt" />
-    <None Include="Assets\Photon Unity Networking\readme.txt" />
-    <None Include="Assets\Photon Unity Networking\changelog.txt" />
     <Reference Include="UnityEngine.UI">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -78,10 +75,10 @@
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/Photon3Unity3D.dll</HintPath>
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Plugins/Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>C:/Users/v/Desktop/work/SimpleClient/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
+      <HintPath>C:/Users/v/Desktop/1/Client/Assets/Plugins/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

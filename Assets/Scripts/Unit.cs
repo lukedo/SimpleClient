@@ -3,7 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Unit : Photon.MonoBehaviour, IPointerClickHandler
+public class Unit : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] protected Text healthBar;
     protected int healthCurrent = 100; 
